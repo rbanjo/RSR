@@ -66,6 +66,9 @@ graduation_month_choices = (
 
 class Person (models.Model):
     name = models.CharField(max_length=200)
+    email_address = models.CharField(max_length=100)
+    home_address = models.CharField(max_length=200)
+    phone_number = models.CharField(max_length=50)
     school = models.CharField(max_length=200, choices=school_choices)
     school_level = models.CharField(max_length=30, choices=school_level_choices)
     major = models.CharField(max_length=100, choices=major_choices)
