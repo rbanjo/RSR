@@ -1,19 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Detail</title>
-</head>
-<body>
+{% extends 'navigation.html' %}
+
+{% block content %}
+
+
 <h1>
-    {{person.name}}
+    {{person.Name}}
 </h1>
 
 <div align="center">
     {% for field in person %}
     {{field}}<br>
     {% endfor %}
+    {% for item in list %}
+    {{item}}<br>
+    {% endfor %}
 </div>
 
-</body>
-</html>
+{% endblock %}
