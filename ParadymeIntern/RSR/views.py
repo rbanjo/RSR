@@ -134,8 +134,29 @@ def listdelete(request, template_name='uploadlist.html'):
 
 @login_required
 def ocr (request):
-    
-    return render(request, 'ocr.html')
+    docID=request.POST.get('docfile', None)
+    documents=get_object_or_404(Document,pk=docID)
+    var=str
+    if os.path.exists(str(settings.MEDIA_ROOT)+str(documents)):
+        status=True
+        file_path=str(settings.MEDIA_ROOT)+str(documents)
+        img=IMG(filename=file_path,resolution=200)
+        images=img.sequence
+        for i in range(len(images)):
+            IMG(images[i]).save(filename=str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+        for i in range(len(images)):
+            if i == 0:
+                var=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+            else:
+                var+="\n\n"
+                var+=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+        print(var)
+    else:
+        status=False
+    context={'var':var, 'status':status}
+    return render(request, 'ocr.html',context)
 
 @login_required
 def parsing(request):

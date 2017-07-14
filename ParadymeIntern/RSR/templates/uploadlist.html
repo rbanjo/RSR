@@ -37,7 +37,13 @@
                                 <input class = "button-style" type="submit" value="Delete" />
                             </form>
                         </td>
-                        <td><a href="{% url 'RSR:ocr' %}">Extract Text</a></td>
+                        <td style="text-align: center" >
+                            <form action="{% url 'RSR:ocr' %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="docfile" value="{{ document.pk }}" />
+                                <input class = "button-style" type="submit" value="Extract Text" />
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
