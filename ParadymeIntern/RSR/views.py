@@ -134,7 +134,7 @@ def listdelete(request, template_name='uploadlist.html'):
 
 @login_required
 def ocr (request):
-
+    
     return render(request, 'ocr.html')
 
 @login_required
@@ -218,6 +218,6 @@ def listdelete(request, template_name='uploadlist.html'):
     return render(request, template_name, {'object': documents})
 
 
-def parse_word_file(filepath):
+'''def parse_word_file(filepath):
 	parsed_string = docx2txt.process(filepath)
-	return parsed_string
+	return parsed_string'''

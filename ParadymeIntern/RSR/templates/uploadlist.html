@@ -9,7 +9,7 @@
 
 
            <div class="inner cover">
-             <h2 class="cover-heading">list of your upload</h2>
+             <h2 class="cover-heading">list of your uploads</h2>
              <p>
 
                  <!-- LIST OF THE UPLOAD FILE-->
@@ -21,6 +21,7 @@
 						<th>Name</th>
 						<th>File</th>
 						<th>Action</th>
+                        <th>Function</th>
 					</tr>
                </thead>
 			   <tbody>
@@ -36,6 +37,7 @@
                                 <input class = "button-style" type="submit" value="Delete" />
                             </form>
                         </td>
+                        <td><a href="{% url 'RSR:ocr' %}">Extract Text</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
