@@ -69,7 +69,7 @@ def uploaddoc(request):
 
             temp_doc.save()
 
-            if ".doc" in temp_doc.docfile.path:
+            '''if ".doc" in temp_doc.docfile.path:
                 print (temp_doc.docfile.path)
                 temp_doc.docfile.wordstr = parse_word_file(temp_doc.docfile.path)
                 print (temp_doc.docfile.wordstr)
@@ -100,7 +100,9 @@ def uploaddoc(request):
                 #endif - do not uncomment
 
                 print (temp_doc.docfile.wordstr)
-                temp_doc.save(update_fields=['wordstr'])
+                temp_doc.save(update_fields=['wordstr'])'''
+            temp_doc.docfile.wordstr=""
+            print (str(temp_doc.docfile))
             return HttpResponseRedirect(reverse('RSR:uploaddoc'))
     else:
         form = DocumentForm()
@@ -134,6 +136,7 @@ def listdelete(request, template_name='uploadlist.html'):
 
 @login_required
 def ocr (request):
+    temp_doc=Document()
     docID=request.POST.get('docfile', None)
     documents=get_object_or_404(Document,pk=docID)
     var=str
