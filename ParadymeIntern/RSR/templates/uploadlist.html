@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<form method="get">
+<form method="get" style="color: #1d9b6c">
     {{documents.form.as_p}}
-      <button type="submit">Search</button>
+      <button type="submit" style="background: rgba(16,12,255,0.75); color: #d9edf7">Search</button>
       </form>
 
 
@@ -40,8 +40,12 @@
                         <td style="text-align: center" >
                             <form action="{% url 'RSR:ocr' %}" method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <input type="hidden" name="docfile" value="{{ document.pk }}" />
-                                <input class = "button-style" type="submit" value="Extract Text" />
+                                <input type="hidden" name="docfileID" value="{{ document.pk }}" />
+                                 {% if document.wordstr in '' %}
+                                    <input class = "button-style" type="submit" value="Extract Text" />
+                                {% else %}
+                                    <input class="button-style" type="submit" value="See Extracted Text"/>
+                                {% endif %}
                             </form>
                         </td>
                     </tr>
@@ -53,7 +57,7 @@
             </table>
             <!--back btn-->
                <p></p>
-               <a href="{% url 'RSR:uploadlist' %}" class = "button-style" type="button"> Go Back</a>
+               <a href="{% url 'RSR:uploaddoc' %}" class = "button-style" type="button"> Go Back</a>
 
             </p>
            </div>
