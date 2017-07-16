@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
 
 from django.template import loader
 
@@ -18,6 +19,7 @@ from .models import Document
 from .forms import DocumentForm
 from .filters import PersonFilter
 from django.db.models import Q
+from django.views.generic.edit import FormView
 
 from django.forms import ModelForm
 
@@ -52,13 +54,66 @@ def get_string(name):
     return utf8_text
 
 
-@login_required
+class DocFileView(FormView):
+    form_class = DocumentForm
+    template_name = 'index.HTML'
+    success_url = reverse_lazy('RSR:uploaddoc')
+    def post(self, request, *args, **kwargs):
+        form_class=self.form_class
+        form=self.get_form(form_class)
+        files=request.FILES.getlist('docfile')
+        if form.is_valid():
+            for f in files:
+                temp_doc=Document(docfile=f)
+                temp_doc.firstname = request.POST['firstname']
+                temp_doc.lastname = request.POST['lastname']
+                temp_doc.type = request.POST['type']
+
+                temp_doc.save()
+                if ".doc" in temp_doc.docfile.path:
+                    print('')
+                    #print (temp_doc.docfile.path)
+                    #temp_doc.docfile.wordstr = parse_word_file(temp_doc.docfile.path)
+                    #print (temp_doc.docfile.wordstr)
+                    #temp_doc.save(update_fields=['wordstr'])
+                else:
+
+                    # temp_doc.docfile.wordstr = textract.process(temp_doc.docfile.path)
+                    path = os.path.join(settings.MEDIA_ROOT, temp_doc.docfile.name)
+                    # if len(temp_doc.docfile.wordstr) < 50:
+                    img = IMG(filename=path, resolution=200)
+                    # save in temp folder
+                    temp_path = os.path.join(settings.MEDIA_ROOT, 'temp/temp')
+                    images = img.sequence
+                    utf8_text = str
+                    for i in range(len(images)):
+                        IMG(images[i]).save(filename=temp_path + str(i) + ".jpg")
+                    for i in range(len(images)):
+                        if i == 0:
+                            utf8_text = get_string(os.path.normpath(temp_path + str(i) + '.jpg'))
+                            # delete from temp folder
+                            os.remove(temp_path + str(i) + '.jpg')
+                        else:
+                            utf8_text += "\n\n"
+                            utf8_text += get_string(os.path.normpath(temp_path + str(i) + '.jpg'))
+                            # delete from temp folder
+                            os.remove(temp_path + str(i) + '.jpg')
+
+                    temp_doc.docfile.wordstr = utf8_text
+                    # endif - do not uncomment
+                    Document.objects.filter(pk=temp_doc.id).update(wordstr=utf8_text)
+                    print (Document.objects.get(pk=temp_doc.id).wordstr)
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+''''@login_required
 def uploaddoc(request):
     # Handle file upload
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            temp_doc = Document(docfile=request.FILES['docfile'])
+            temp_doc = Document(docfile=request.FILES.getlist('docfile'))
 
             #temp_doc.firstname = Document(docfile=request.POST.get('firstname'))
             #temp_doc.lastname = Document(docfile=request.POST.get('lastname'))
@@ -69,7 +124,7 @@ def uploaddoc(request):
 
             temp_doc.save()
 
-            '''if ".doc" in temp_doc.docfile.path:
+            if ".doc" in temp_doc.docfile.path:
                 print (temp_doc.docfile.path)
                 temp_doc.docfile.wordstr = parse_word_file(temp_doc.docfile.path)
                 print (temp_doc.docfile.wordstr)
@@ -83,6 +138,7 @@ def uploaddoc(request):
                 # save in temp folder
                 temp_path = os.path.join(settings.MEDIA_ROOT,'temp/temp')
                 images=img.sequence
+                utf8_text = str
                 for i in range(len(images)):
                     IMG(images[i]).save(filename=temp_path+str(i)+".jpg")
                 for i in range(len(images)):
@@ -98,14 +154,13 @@ def uploaddoc(request):
 
                 temp_doc.docfile.wordstr = utf8_text
                 #endif - do not uncomment
-
-                print (temp_doc.docfile.wordstr)
-                temp_doc.save(update_fields=['wordstr'])'''
+                Document.objects.filter(pk=temp_doc.id).update(wordstr=utf8_text)
+                print (Document.objects.get(pk=temp_doc.id).wordstr)
             return HttpResponseRedirect(reverse('RSR:uploaddoc'))
     else:
         form = DocumentForm()
     documents = Document.objects.all()
-    return render(request,'index.html',{'documents': documents, 'form': form})
+    return render(request,'index.html',{'documents': documents, 'form': form})'''
 
 
 

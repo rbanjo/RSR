@@ -24,11 +24,11 @@ app_name = 'RSR'
 urlpatterns = [
 
 
-    url(r'^uploaddoc/$', views.uploaddoc, name='uploaddoc'),
+    url(r'^uploaddoc/$', DocFileView.as_view(), name='uploaddoc'),
     url(r'^uploadlist/$', views.uploadlist, name = 'uploadlist'),
     url(r'^listdelete/$', views.listdelete, name="listdelete"),
 
-    url(r'^uploaddoc/$', uploaddoc, name='uploaddoc'),
+    url(r'^uploaddoc/$', DocFileView.as_view(), name='uploaddoc'),
     url(r'^uploadlist/$', uploadlist, name = 'uploadlist'),
     url(r'^listdelete/$', listdelete, name="listdelete"),
 
