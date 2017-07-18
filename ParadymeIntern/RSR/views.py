@@ -58,6 +58,7 @@ class DocFileView(FormView):
     form_class = DocumentForm
     template_name = 'index.HTML'
     success_url = reverse_lazy('RSR:uploaddoc')
+
     def post(self, request, *args, **kwargs):
         form_class=self.form_class
         form=self.get_form(form_class)
