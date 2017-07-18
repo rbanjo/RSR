@@ -4,6 +4,26 @@
     {% if form.errors %}
         <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
+    <style type="text/css">
+    input{
+        color: #0f0f0f;
+    }
+    .divider{
+        width:5px;
+        height:auto;
+        display:inline-block;
+    }
+    button{
+        background-color: #d58512;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 5px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+    </style>
  <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
 
@@ -15,13 +35,11 @@
 
         {{ form.password }}
 
-
+        <div class="divider"> </div>
         <button>login</button>
         <input type="hidden" name="next" value="{{ next }}" />
     </form>
 
     {% endblock %}
 
-</body>
 
-</html>
