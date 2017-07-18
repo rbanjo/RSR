@@ -14,10 +14,10 @@
              <h1 class="cover-heading">Upload your resume</h1>
 
 
-             <form action="{% url 'RSR:uploaddoc' %}" method="post" enctype="multipart/form-data" >
+             <form action="{% url 'RSR:uploaddoc' %}" method="post" enctype="multipart/form-data"  >
                  <div align="center">
                      {% csrf_token %}
-                    <input type="file" name="docfile" id="docfile" multiple onchange="uploadlist()">
+                    <input type="file" name="docfile" id="docfile" multiple onchange="uploadlist()" required>
                      <script>
                          uploadlist=function () {
                              var input=document.getElementById("docfile");
@@ -55,17 +55,19 @@
                      <div class="first" id="filelist"></div><br/>
                 </div>
                 First name:
-                <input style="color: #0f0f0f;" type="text" name="firstname">
+                <input style="color: #0f0f0f;" type="text" name="firstname" required>
 
                 Last name:
-                <input style="color: #0f0f0f;" type="text" name="lastname">
+                <input style="color: #0f0f0f;" type="text" name="lastname" required>
                 <br><br>
                 <p>   </p>
-                <input type="radio" name="type" value="Prospective Intern"> Prospective Intern<br>
-                <input type="radio" name="type" value="Prospective Employee"> Prospective Employee<br>
-                <input type="radio" name="type" value="Intern">Intern<br>
-                <input type="radio" name="type" value="Employee"> Employee<br><br>
-                <p>   </p>
+                 <fieldset>
+                <input type="radio" name="type" value="Prospective Intern" required> Prospective Intern<br>
+                <input type="radio" name="type" value="Prospective Employee" required> Prospective Employee<br>
+                <input type="radio" name="type" value="Intern" required>Intern<br>
+                <input type="radio" name="type" value="Employee" required> Employee<br><br>
+                </fieldset>
+                     <p>   </p>
                 <input class = "button-style" type="submit" value="Upload"/>
             </form>
 

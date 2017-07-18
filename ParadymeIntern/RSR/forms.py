@@ -6,4 +6,4 @@ class DocumentForm(forms.Form):
     pwd = os.path.dirname(__file__)
     with open(pwd+"/static/config/config.txt") as myfile:
         dataconfig="".join(line.rstrip() for line in myfile)
-    docfile = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True,}),label='Select a file:',)
+
