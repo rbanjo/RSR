@@ -36,6 +36,7 @@ from django.db.models import Q
 from PIL import Image
 from wand.image import Image as IMG
 import pytesseract
+from django.template.context_processors import request
 # import textract
 ###
 
@@ -227,11 +228,73 @@ def parsing(request):
 def search(request):
     query_set = Person.objects.all()
     query = request.GET.get("q")
+    num = 0
     if query:
         query_set=query_set.filter(Name__icontains=query)
     # The filtered query_set is then put through more filters from django
     personFilter = PersonFilter(request.GET, query_set)
-    return render(request, 'SearchExport/search.html', {'personFilter': personFilter})
+    return render(request, 'SearchExport/search.html', {'personFilter': personFilter, 'num':num})
+
+#gets the name of the person from the text extracted: Abhishek Shrinivasan 07/20/17
+def getName(string):
+    lines=string.split('\n')
+    keywords=['@','skills','technical','experience','.com',' ']
+    i=1
+    for line in lines:
+        words=line.split(' ')
+        pointer=True
+        if(len(words)>1 and len(words)<=5):
+            for word in words:
+                if str(word).lower() in keywords:
+                   pointer=False
+                   break
+                elif word=='' or word.find("@")>-1:
+                    pointer=False
+                    break
+                elif any(i.isdigit() for i in word):
+                    pointer = False
+                    break
+            if pointer==True:
+                name=""
+                for word in words:
+                    name+=word
+                    name+=" "
+                return name
+        else:
+            pointer=False
+        if pointer==True:
+            break
+        i+=1
+        if i>10:
+            return None
+
+
+
+
+
+
+
+@login_required
+def OCRSearch(request):
+    doc_objects=Document.objects.all()
+    search_item=str(request.GET.get('search'))
+    print(search_item)
+    result_location=[]
+    num=0
+    names = []
+    for document in doc_objects:
+        doc_string=str(document.wordstr)
+        if search_item.lower() in doc_string.lower():
+            result_location.append(document)
+            name=getName(doc_string)
+            #print(document.docfile.name)
+            num+=1
+            if name is not None:
+                name=name.lower().title()
+                names.append(name)
+    context={'results': result_location,'num':num,'names':names}
+
+    return render(request, 'OCRSearch.html',context)
 
 @login_required
 def detail(request,pk):

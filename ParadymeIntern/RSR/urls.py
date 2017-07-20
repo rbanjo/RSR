@@ -34,6 +34,7 @@ urlpatterns = [
 
     url(r'^main/$', main, name = 'main'),
     url(r'^ocr/$', ocr, name='ocr'),
+    url(r'^ocrsearch',OCRSearch, name='ocrsearch'),
     url(r'^parsing/$', parsing, name='parsing'),
     url(r'^search/$', search, name='search'),
     url(r'^user_access/$', user_acc_cont, name='user_access'),

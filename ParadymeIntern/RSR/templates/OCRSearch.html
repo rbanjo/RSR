@@ -1,0 +1,52 @@
+{% extends 'navigation.html' %}
+
+{% block content %}
+
+
+    {% load widget_tweaks %}
+<style type="text/css">
+    li.first
+    {
+        white-space : pre-wrap;
+    }
+</style>
+
+<form action="" method="Get">
+
+            <!-- Search Bar -->
+            <div>
+                Search Skills:
+                <input style="color: #000000;"type="text" name="search" placeholder="Input search term"
+                       value="{{request.GET.search}}"/>
+            </div><br/><br/>
+            <div align="center">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="glyphicon glyphicon-search"></span> Search
+                  </button>
+                </div>
+</form><br/><br/>
+{% if results %}
+    <div align="left">
+    <b>Results:</b>
+    </div>
+{% endif %}
+<div align="center">
+    {% if results %}
+        <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for name in names %}
+            <tr>
+                <td>{{ name }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% endif %}
+</div>
+
+{% endblock %}
