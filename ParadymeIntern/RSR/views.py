@@ -238,7 +238,7 @@ def search(request):
 #gets the name of the person from the text extracted: Abhishek Shrinivasan 07/20/17
 def getName(string):
     lines=string.split('\n')
-    keywords=['@','skills','technical','experience','.com',' ']
+    keywords=['skills','technical','experience','personal','objective','manager']
     i=1
     for line in lines:
         words=line.split(' ')
@@ -248,7 +248,7 @@ def getName(string):
                 if str(word).lower() in keywords:
                    pointer=False
                    break
-                elif word=='' or word.find("@")>-1:
+                elif word=='' or word.find("@")>-1 :
                     pointer=False
                     break
                 elif any(i.isdigit() for i in word):
@@ -265,9 +265,20 @@ def getName(string):
         if pointer==True:
             break
         i+=1
-        if i>10:
+        if i>50:
             return None
 
+def getEmail(string):
+    lines=string.split("\n")
+    email_suffix=['.com','.edu','.net']
+    for line in lines:
+        words=line.split(' ')
+        for word in words:
+            if word.find('@')!=-1:
+                return word
+            for suffix in email_suffix:
+                if word.find(suffix)!=-1:
+                    return word
 
 
 
@@ -280,19 +291,20 @@ def OCRSearch(request):
     search_item=str(request.GET.get('search'))
     print(search_item)
     result_location=[]
-    num=0
-    names = []
+    names = {}
     for document in doc_objects:
         doc_string=str(document.wordstr)
         if search_item.lower() in doc_string.lower():
             result_location.append(document)
+            print(document.docfile.name)
             name=getName(doc_string)
-            #print(document.docfile.name)
-            num+=1
+            email=getEmail(doc_string)
+            if email is None:
+                email="no email information given"
             if name is not None:
                 name=name.lower().title()
-                names.append(name)
-    context={'results': result_location,'num':num,'names':names}
+                names[name]=email
+    context={'results': result_location,'names':names}
 
     return render(request, 'OCRSearch.html',context)
 

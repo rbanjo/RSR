@@ -5,9 +5,8 @@
 
     {% load widget_tweaks %}
 <style type="text/css">
-    li.first
-    {
-        white-space : pre-wrap;
+    input.one::selection{
+        background: #9fddff;
     }
 </style>
 
@@ -16,7 +15,7 @@
             <!-- Search Bar -->
             <div>
                 Search Skills:
-                <input style="color: #000000;"type="text" name="search" placeholder="Input search term"
+                <input class="one" style="color: #000000;"type="text" name="search" placeholder="Input search term"
                        value="{{request.GET.search}}"/>
             </div><br/><br/>
             <div align="center">
@@ -36,12 +35,14 @@
         <thead>
         <tr>
             <th>Name</th>
+            <th>Email</th>
         </tr>
         </thead>
         <tbody>
-        {% for name in names %}
+        {% for name,email in names.items %}
             <tr>
                 <td>{{ name }}</td>
+                <td>{{ email }}</td>
             </tr>
         {% endfor %}
         </tbody>
