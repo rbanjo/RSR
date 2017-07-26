@@ -1,0 +1,53 @@
+{% extends 'navigation.html' %}
+
+{% block content %}
+
+
+    {% load widget_tweaks %}
+<style type="text/css">
+    input.one::selection{
+        background: #9fddff;
+    }
+</style>
+
+<form action="" method="Get">
+
+            <!-- Search Bar -->
+            <div>
+                Search Skills:
+                <input class="one" style="color: #000000;"type="text" name="search" placeholder="Input search term"
+                       value="{{request.GET.search}}"/>
+            </div><br/><br/>
+            <div align="center">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="glyphicon glyphicon-search"></span> Search
+                  </button>
+                </div>
+</form><br/><br/>
+{% if results %}
+    <div align="left">
+    <b>Results:</b>
+    </div>
+{% endif %}
+<div align="center">
+    {% if results %}
+        <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for name,email in names.items %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ email }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% endif %}
+</div>
+
+{% endblock %}

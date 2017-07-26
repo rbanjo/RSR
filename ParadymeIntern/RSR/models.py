@@ -29,6 +29,7 @@ class Document(models.Model):
 
     wordstr = models.TextField()
 
+
 class Person(models.Model):
     def get_absolute_url(self):
         return reverse('person_detail', args=[str(self.id)])

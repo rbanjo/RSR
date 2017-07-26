@@ -1,41 +1,80 @@
 {% extends 'navigation.html' %}
 
 {% block content %}
+    <style type="text/css">
+    li{
+        white-space: pre-wrap;
+    }
+    div.first{
+        color: #2aabd2;
+    }
+    </style>
 
-           <div class="inner cover">
+    <div class="inner cover" xmlns="http://www.w3.org/1999/html">
              <h1 class="cover-heading">Upload your resume</h1>
 
 
-             <form action="{% url 'RSR:uploaddoc' %}" method="post" enctype="multipart/form-data" align="center">
-                         <div align="center">
-
-             {% csrf_token %}
-                <p>{{ form.non_field_errors }}</p>
-                <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                <p>{{ form.docfile.errors }}{{ form.docfile }}</p>
+             <form action="{% url 'RSR:uploaddoc' %}" method="post" enctype="multipart/form-data"  >
+                 <div align="center">
+                     {% csrf_token %}
+                    <input type="file" name="docfile" id="docfile" multiple onchange="uploadlist()" required>
+                     <script>
+                         uploadlist=function () {
+                             var input=document.getElementById("docfile");
+                             var output=document.getElementById("filelist");
+                             output.innerHTML="<ul>";
+                             for(var i=0;i<input.files.length;i++)
+                             {
+                                 var str="<li>Document Name = "+input.files.item(i).name;
+                                 if(input.files.item(i).name.indexOf(".pdf")!==-1)
+                                 {
+                                     str+="\t\tType = PDF Document";
+                                 }
+                                 else if((input.files.item(i).name.indexOf(".doc")!==-1) || (input.files.item(i).name.indexOf(".docx")!==-1))
+                                 {
+                                     str+="\t\tType = Word Document";
+                                 }
+                                 else if(input.files.item(i).name.indexOf(".png")!==-1)
+                                 {
+                                     str+="\t\tType = PNG File";
+                                 }
+                                 else if(input.files.item(i).name.indexOf(".txt")!==-1)
+                                 {
+                                     str+="\t\tType = Text File";
+                                 }
+                                 else
+                                 {
+                                     str+="\t\tType = Unknown"
+                                 }
+                                 str+="</li";
+                                 output.innerHTML+=str;
+                             }
+                             output.innerHTML+="</ul>";
+                         }
+                     </script>
+                     <div class="first" id="filelist"></div><br/>
                 </div>
                 First name:
-                <input style="color: #000000;" type="text" name="firstname">
+                <input style="color: #0f0f0f;" type="text" name="firstname" required>
 
                 Last name:
-                <input style="color: #000000;" type="text" name="lastname">
+                <input style="color: #0f0f0f;" type="text" name="lastname" required>
                 <br><br>
                 <p>   </p>
-                <input type="radio" name="type" value="Prospective Intern"> Prospective Intern<br>
-                <input type="radio" name="type" value="Prospective Employee"> Prospective Employee<br>
-                <input type="radio" name="type" value="Intern">Intern<br>
-                <input type="radio" name="type" value="Employee"> Employee<br><br>
-                <p>   </p>
+                 <fieldset>
+                <input type="radio" name="type" value="Prospective Intern" required> Prospective Intern<br>
+                <input type="radio" name="type" value="Prospective Employee" required> Prospective Employee<br>
+                <input type="radio" name="type" value="Intern" required>Intern<br>
+                <input type="radio" name="type" value="Employee" required> Employee<br><br>
+                </fieldset>
+                     <p>   </p>
                 <input class = "button-style" type="submit" value="Upload"/>
             </form>
 
             <p>
 
             <form action="{% url 'RSR:uploadlist' %}">
-
-                 <input type="submit" value="Check the upload list" />
-
-                                  <input class = "button-style" type="submit" value="Check the upload list" />
+               <input class = "button-style" type="submit" value="Check the upload list" />
 
              </form>
             </p>

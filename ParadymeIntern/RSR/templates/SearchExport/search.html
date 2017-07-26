@@ -118,5 +118,10 @@
    </tbody>
  </table>
     </div>
+<div>
+    {% if num != 0 %}
+        Number of Documents with word {{request.GET.q}} is = {{num}}
+    {% endif %}
+</div>
 
 {% endblock %}

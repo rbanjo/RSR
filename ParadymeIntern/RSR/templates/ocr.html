@@ -4,10 +4,29 @@
     <meta charset="UTF-8">
     <title>OCR</title>
 </head>
+<style type="text/css">
+    p.first{
+        text-align: center;
+        font-size: x-large;
+    }
+    p.second{
+        white-space: pre-line;
+        text-align: center;
+    }
+</style>
 <body>
-
+    <p class="first">
+        {% if status %}
+            Text Extracted!
+        {% else %}
+            Text Not Found!
+                <p style="text-align: center">Error: Path Does Not Exist</p>
+        {% endif %}
+    </p>
+    <p class="second">
+        {{ var }}
     <p>
-        <a href = "" >OCR</a>
+        <a href="{% url 'RSR:uploadlist' %}">Return to previous page</a>
     </p>
 
 </body>
