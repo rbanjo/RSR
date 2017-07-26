@@ -37,6 +37,7 @@ from PIL import Image
 from wand.image import Image as IMG
 import pytesseract
 from django.template.context_processors import request
+import re
 # import textract
 ###
 
@@ -269,16 +270,21 @@ def getName(string):
             return None
 
 def getEmail(string):
-    lines=string.split("\n")
-    email_suffix=['.com','.edu','.net']
-    for line in lines:
-        words=line.split(' ')
-        for word in words:
-            if word.find('@')!=-1:
-                return word
-            for suffix in email_suffix:
-                if word.find(suffix)!=-1:
-                    return word
+    match = re.match(r'([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', string)
+    if match is None:
+        return 'No Email provided.'
+    else:
+        return match.group(0)
+    # lines=string.split("\n")
+    # email_suffix=['.com','.edu','.net']
+    # for line in lines:
+    #     words=line.split(' ')
+    #     for word in words:
+    #         if word.find('@')!=-1:
+    #             return word
+    #         for suffix in email_suffix:
+    #             if word.find(suffix)!=-1:
+    #                 return word
 
 
 
@@ -296,11 +302,10 @@ def OCRSearch(request):
         doc_string=str(document.wordstr)
         if search_item.lower() in doc_string.lower():
             result_location.append(document)
-            print(document.docfile.name)
+            print(document.docfile.name) # docfile.name?
             name=getName(doc_string)
             email=getEmail(doc_string)
-            if email is None:
-                email="no email information given"
+            print(email)
             if name is not None:
                 name=name.lower().title()
                 names[name]=email
