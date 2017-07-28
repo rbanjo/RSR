@@ -105,7 +105,7 @@ class DocFileView(FormView):
                     temp_doc.docfile.wordstr = utf8_text
                     # endif - do not uncomment
                     Document.objects.filter(pk=temp_doc.id).update(wordstr=utf8_text)
-                    print (Document.objects.get(pk=temp_doc.id).wordstr)
+                    #print (Document.objects.get(pk=temp_doc.id).wordstr)
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -271,7 +271,7 @@ def getName(string):
 
 def getEmail(string):
 
-    print(str(string))
+    #print(str(string))
     match = re.search('([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', str(string))
 
     if match is None:
@@ -290,24 +290,27 @@ def getEmail(string):
     #                 return word
 
 def getPhoneNumber(string):
-        if phones = re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})', string)
-        #+256 301-202-0777
-        or phones = re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4})', string)
-        #256 301 202 0777
-        or phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4})', string)
-        #+256 301.212.0777
-        or phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4})', string)
-        #+256 (301) 202.0777
-        or phones = re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string)
-        #+256 (301) 202 0777
-        or phones = re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string)
-        #+256 (301) 202-0777
-        or phones = re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string)
-        #+2563012020777
-        or phones = re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string)
-
-            for phonenumber in phones:
-                print phone
+    if re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string):
+        phones=re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string)
+    elif re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string):
+        phones=re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string)
+    elif re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string):
+        phones=re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string)
+    elif re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string):
+        phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string)
+    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string):
+        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string)
+    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string):
+        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string)
+    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string):
+        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string)
+    elif re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string):
+        phones=re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string)
+    else:
+        phones=""
+    if phones:
+        for phonenumber in phones:
+            print phonenumber
 
 
 
@@ -329,6 +332,7 @@ def OCRSearch(request):
             print(document.docfile.name) # docfile.name?
             name=getName(doc_string)
             email=getEmail(doc_string)
+            getPhoneNumber(doc_string)
             print(email)
             if name is not None:
                 name=name.lower().title()
