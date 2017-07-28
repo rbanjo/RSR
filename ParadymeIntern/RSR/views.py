@@ -66,11 +66,11 @@ class DocFileView(FormView):
         form=self.get_form(form_class)
         files=request.FILES.getlist('docfile')
         if form.is_valid():
-            for f in files:
-                temp_doc=Document(docfile=f)
-                temp_doc.firstname = request.POST['firstname']
-                temp_doc.lastname = request.POST['lastname']
-                temp_doc.type = request.POST['type']
+            for counter in range(len(files)):
+                temp_doc=Document(docfile=files[counter])
+                temp_doc.firstname = request.POST.getlist('firstname')[counter]
+                temp_doc.lastname = request.POST.getlist('lastname')[counter]
+                temp_doc.type = request.POST.getlist('type')[counter]
 
                 temp_doc.save()
                 if ".doc" in temp_doc.docfile.path:
@@ -270,21 +270,21 @@ def getName(string):
             return None
 
 def getEmail(string):
-    match = re.match(r'([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', string)
+    '''match = re.match(r'([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', string)
     if match is None:
         return 'No Email provided.'
     else:
-        return match.group(0)
-    # lines=string.split("\n")
-    # email_suffix=['.com','.edu','.net']
-    # for line in lines:
-    #     words=line.split(' ')
-    #     for word in words:
-    #         if word.find('@')!=-1:
-    #             return word
-    #         for suffix in email_suffix:
-    #             if word.find(suffix)!=-1:
-    #                 return word
+        return match.group(0)'''
+    lines=string.split("\n")
+    email_suffix=['.com','.edu','.net']
+    for line in lines:
+        words=line.split(' ')
+        for word in words:
+            if word.find('@')!=-1:
+                return word
+            for suffix in email_suffix:
+                if word.find(suffix)!=-1:
+                    return word
 
 
 
