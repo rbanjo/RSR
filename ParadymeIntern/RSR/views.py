@@ -270,7 +270,6 @@ def getName(string):
             return None
 
 def getEmail(string):
-    '''match = re.match(r'([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', string)
 
     print(str(string))
     match = re.search('([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', str(string))
@@ -278,17 +277,38 @@ def getEmail(string):
     if match is None:
         return 'No Email provided.'
     else:
-        return match.group(0)'''
-    lines=string.split("\n")
-    email_suffix=['.com','.edu','.net']
-    for line in lines:
-        words=line.split(' ')
-        for word in words:
-            if word.find('@')!=-1:
-                return word
-            for suffix in email_suffix:
-                if word.find(suffix)!=-1:
-                    return word
+        return match.group(0)
+    # lines=string.split("\n")
+    # email_suffix=['.com','.edu','.net']
+    # for line in lines:
+    #     words=line.split(' ')
+    #     for word in words:
+    #         if word.find('@')!=-1:
+    #             return word
+    #         for suffix in email_suffix:
+    #             if word.find(suffix)!=-1:
+    #                 return word
+
+def getPhoneNumber(string):
+        if phones = re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})', string)
+        #+256 301-202-0777
+        or phones = re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4})', string)
+        #256 301 202 0777
+        or phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4})', string)
+        #+256 301.212.0777
+        or phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4})', string)
+        #+256 (301) 202.0777
+        or phones = re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string)
+        #+256 (301) 202 0777
+        or phones = re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string)
+        #+256 (301) 202-0777
+        or phones = re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string)
+        #+2563012020777
+        or phones = re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string)
+
+            for phonenumber in phones:
+                print phone
+
 
 
 
