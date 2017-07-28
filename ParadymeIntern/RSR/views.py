@@ -105,7 +105,7 @@ class DocFileView(FormView):
                     temp_doc.docfile.wordstr = utf8_text
                     # endif - do not uncomment
                     Document.objects.filter(pk=temp_doc.id).update(wordstr=utf8_text)
-                    #print (Document.objects.get(pk=temp_doc.id).wordstr)
+                    print (getPhoneNumber(Document.objects.get(pk=temp_doc.id).wordstr))
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -290,27 +290,25 @@ def getEmail(string):
     #                 return word
 
 def getPhoneNumber(string):
-    if re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string):
-        phones=re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string)
-    elif re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string):
-        phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string)
+    if re.search(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string):
+        return re.search(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string):
+        return e.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string).group(0)
     else:
-        phones=""
-    if phones:
-        for phonenumber in phones:
-            print phonenumber
+        return "No phone number provided."
+
 
 
 
