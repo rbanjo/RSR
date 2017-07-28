@@ -271,6 +271,10 @@ def getName(string):
 
 def getEmail(string):
     '''match = re.match(r'([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', string)
+
+    print(str(string))
+    match = re.search('([\w.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', str(string))
+
     if match is None:
         return 'No Email provided.'
     else:
