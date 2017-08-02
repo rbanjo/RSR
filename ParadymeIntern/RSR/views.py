@@ -106,6 +106,7 @@ class DocFileView(FormView):
                     # endif - do not uncomment
                     Document.objects.filter(pk=temp_doc.id).update(wordstr=utf8_text)
                     print (getPhoneNumber(Document.objects.get(pk=temp_doc.id).wordstr))
+                    print (getEmail(Document.objects.get(pk=temp_doc.id).wordstr))
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -318,26 +319,23 @@ def getPhoneNumber(string):
 
 @login_required
 def OCRSearch(request):
-    doc_objects=Document.objects.all()
-    search_item=str(request.GET.get('search'))
+    doc_objects = Document.objects.all()
+    search_item = str(request.GET.get('search'))
     print(search_item)
-    result_location=[]
-    names = {}
+    results=[]
     for document in doc_objects:
-        doc_string=str(document.wordstr)
-        if search_item.lower() in doc_string.lower():
-            result_location.append(document)
-            print(document.docfile.name) # docfile.name?
-            name=getName(doc_string)
-            email=getEmail(doc_string)
-            getPhoneNumber(doc_string)
+        wordstr = str(document.wordstr)
+        if search_item.lower() in wordstr.lower():
+            print(document.docfile.name)
+            name = document.firstname + ' ' + document.lastname
+            email = getEmail(wordstr)
+            phone = getPhoneNumber(wordstr)
             print(email)
-            if name is not None:
-                name=name.lower().title()
-                names[name]=email
-    context={'results': result_location,'names':names}
+            print(phone)
+            results.append((document, name, email, phone))
+    context = {'results': results}
 
-    return render(request, 'OCRSearch.html',context)
+    return render(request, 'OCRSearch.html', context)
 
 @login_required
 def detail(request,pk):

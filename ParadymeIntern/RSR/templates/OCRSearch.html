@@ -36,13 +36,17 @@
         <tr>
             <th>Name</th>
             <th>Email</th>
+            <th>Phone Number</th>
+            <th>Resume</th>
         </tr>
         </thead>
         <tbody>
-        {% for name,email in names.items %}
+        {% for doc,name,email,phone in results %}
             <tr>
                 <td>{{ name }}</td>
                 <td>{{ email }}</td>
+                <td>{{ phone }}</td>
+                <td><a href="{{ doc.docfile.url }}">{{doc.docfile}}</a></td>
             </tr>
         {% endfor %}
         </tbody>
