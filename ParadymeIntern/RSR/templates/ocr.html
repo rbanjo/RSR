@@ -9,12 +9,13 @@
         text-align: center;
         font-size: x-large;
     }
-    p.second{
+    .second{
         white-space: pre-line;
         text-align: center;
     }
 </style>
 <body>
+  <a href="{% url 'RSR:ocrsearch' %}">Test our search function here</a>
     <p class="first">
         {% if status %}
             Text Extracted!
@@ -23,11 +24,28 @@
                 <p style="text-align: center">Error: Path Does Not Exist</p>
         {% endif %}
     </p>
-    <p class="second">
+    <form class="second"  method="post" contenteditable="true" id="p1" action="">
+        {% csrf_token %}
+        <input type="hidden" name="docfileID" value="{{ ID }}">
+        <div id="div1" class="second">
         {{ var }}
-    <p>
+            </div>
+    </form>
         <a href="{% url 'RSR:uploadlist' %}">Return to previous page</a>
-    </p>
+  <button name="b1" id="b1" onclick="myfnc()">Done!</button>
+      <script type="application/javascript">
+          function myfnc() {
+            var input=document.createElement('input');
+            input.type='hidden';
+            input.name='dt';
+            var ot=document.getElementById('div1').innerHTML.toString();
+            ot.replace(/[&]nbsp[;]/gi," ");
+            input.setAttribute('value',ot);
+            document.getElementById('p1').appendChild(input);
+            document.getElementById('p1').submit();
+      }
+      </script>
 
+    </div>
 </body>
 </html>

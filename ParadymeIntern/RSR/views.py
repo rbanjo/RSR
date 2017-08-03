@@ -105,7 +105,8 @@ class DocFileView(FormView):
                     temp_doc.docfile.wordstr = utf8_text
                     # endif - do not uncomment
                     Document.objects.filter(pk=temp_doc.id).update(wordstr=utf8_text)
-                    #print (Document.objects.get(pk=temp_doc.id).wordstr)
+                    print (getPhoneNumber(Document.objects.get(pk=temp_doc.id).wordstr))
+                    print (getEmail(Document.objects.get(pk=temp_doc.id).wordstr))
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -190,36 +191,56 @@ def listdelete(request, template_name='uploadlist.html'):
 
 # OCR TEAM
 
+def rep(text,string):
+    words=text.split(' ')
+    new_text=""
+    for word in words:
+        if word.find(string)==-1:
+            new_text+=word
+            new_text+=' '
+    return new_text
+
 @login_required
 def ocr (request):
     docID=request.POST.get('docfileID', None)
-    documents=get_object_or_404(Document,pk=docID)
-    var=str
-    if documents.wordstr in [None,""]:
-        if os.path.exists(str(settings.MEDIA_ROOT)+str(documents)):
-            status=True
-            file_path=str(settings.MEDIA_ROOT)+str(documents)
-            img=IMG(filename=file_path,resolution=200)
-            images=img.sequence
-            for i in range(len(images)):
-                IMG(images[i]).save(filename=str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-            for i in range(len(images)):
-                if i == 0:
-                    var=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-                    os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-                else:
-                    var+="\n\n"
-                    var+=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-                    os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-            Document.objects.filter(pk=docID).update(wordstr=var)
+    var=""
+    status=False
+    if request.method=='POST':
+        if not request.POST.getlist('dt'):
+            var=str
+            documents = get_object_or_404(Document, pk=docID)
+            if documents.wordstr in [None,""]:
+                if os.path.exists(str(settings.MEDIA_ROOT)+str(documents)):
+                    status=True
+                    file_path=str(settings.MEDIA_ROOT)+str(documents)
+                    img=IMG(filename=file_path,resolution=200)
+                    images=img.sequence
+                    for i in range(len(images)):
+                        IMG(images[i]).save(filename=str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                    for i in range(len(images)):
+                        if i == 0:
+                            var=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                            os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                        else:
+                            var+="\n\n"
+                            var+=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                            os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                    Document.objects.filter(pk=docID).update(wordstr=var)
 
-        else:
-            status=False
+                else:
+                    status=False
+            else:
+                status=True
+            var=str(documents.wordstr)
+        elif request.POST.getlist('dt'):
+            var=str(request.POST.get('dt'))
+            #var=rep(var,'&nbsp;')
+            Document.objects.filter(pk=docID).update(wordstr=var)
+            status=True
+        context = {'var': var, 'status': status,'ID':docID}
+        return render(request, 'ocr.html', context)
     else:
-        status=True
-        var=str(documents.wordstr)
-    context={'var':var, 'status':status}
-    return render(request, 'ocr.html',context)
+        return render(request,'ocr.html')
 
 @login_required
 def parsing(request):
@@ -290,27 +311,25 @@ def getEmail(string):
     #                 return word
 
 def getPhoneNumber(string):
-    if re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string):
-        phones=re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string)
-    elif re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string):
-        phones = re.findall(r'.[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string)
-    elif re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string):
-        phones=re.findall(r'.[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string)
+    if re.search(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string):
+        return re.search(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[\-\.\s]??\d{4})', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[\d]{3}-[\d]{3}-[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}-[\d]{4}', string).group(0)
+    elif re.search(r'\+[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string):
+        return re.search(r'\+[\d]{1,3}[\d]{3}[\d]{3}[\d]{4}', string).group(0)
     else:
-        phones=""
-    if phones:
-        for phonenumber in phones:
-            print phonenumber
+        return "No phone number provided."
+
 
 
 
@@ -320,26 +339,23 @@ def getPhoneNumber(string):
 
 @login_required
 def OCRSearch(request):
-    doc_objects=Document.objects.all()
-    search_item=str(request.GET.get('search'))
+    doc_objects = Document.objects.all()
+    search_item = str(request.GET.get('search'))
     print(search_item)
-    result_location=[]
-    names = {}
+    results=[]
     for document in doc_objects:
-        doc_string=str(document.wordstr)
-        if search_item.lower() in doc_string.lower():
-            result_location.append(document)
-            print(document.docfile.name) # docfile.name?
-            name=getName(doc_string)
-            email=getEmail(doc_string)
-            getPhoneNumber(doc_string)
+        wordstr = str(document.wordstr)
+        if search_item.lower() in wordstr.lower():
+            print(document.docfile.name)
+            name = document.firstname + ' ' + document.lastname
+            email = getEmail(wordstr)
+            phone = getPhoneNumber(wordstr)
             print(email)
-            if name is not None:
-                name=name.lower().title()
-                names[name]=email
-    context={'results': result_location,'names':names}
+            print(phone)
+            results.append((document, name, email, phone))
+    context = {'results': results}
 
-    return render(request, 'OCRSearch.html',context)
+    return render(request, 'OCRSearch.html', context)
 
 @login_required
 def detail(request,pk):
