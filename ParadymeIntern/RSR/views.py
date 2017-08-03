@@ -191,36 +191,56 @@ def listdelete(request, template_name='uploadlist.html'):
 
 # OCR TEAM
 
+def rep(text,string):
+    words=text.split(' ')
+    new_text=""
+    for word in words:
+        if word.find(string)==-1:
+            new_text+=word
+            new_text+=' '
+    return new_text
+
 @login_required
 def ocr (request):
     docID=request.POST.get('docfileID', None)
-    documents=get_object_or_404(Document,pk=docID)
-    var=str
-    if documents.wordstr in [None,""]:
-        if os.path.exists(str(settings.MEDIA_ROOT)+str(documents)):
-            status=True
-            file_path=str(settings.MEDIA_ROOT)+str(documents)
-            img=IMG(filename=file_path,resolution=200)
-            images=img.sequence
-            for i in range(len(images)):
-                IMG(images[i]).save(filename=str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-            for i in range(len(images)):
-                if i == 0:
-                    var=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-                    os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-                else:
-                    var+="\n\n"
-                    var+=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-                    os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
-            Document.objects.filter(pk=docID).update(wordstr=var)
+    var=""
+    status=False
+    if request.method=='POST':
+        if not request.POST.getlist('dt'):
+            var=str
+            documents = get_object_or_404(Document, pk=docID)
+            if documents.wordstr in [None,""]:
+                if os.path.exists(str(settings.MEDIA_ROOT)+str(documents)):
+                    status=True
+                    file_path=str(settings.MEDIA_ROOT)+str(documents)
+                    img=IMG(filename=file_path,resolution=200)
+                    images=img.sequence
+                    for i in range(len(images)):
+                        IMG(images[i]).save(filename=str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                    for i in range(len(images)):
+                        if i == 0:
+                            var=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                            os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                        else:
+                            var+="\n\n"
+                            var+=get_string(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                            os.remove(str(settings.MEDIA_ROOT)+'/temp/'+str(i)+'.jpg')
+                    Document.objects.filter(pk=docID).update(wordstr=var)
 
-        else:
-            status=False
+                else:
+                    status=False
+            else:
+                status=True
+            var=str(documents.wordstr)
+        elif request.POST.getlist('dt'):
+            var=str(request.POST.get('dt'))
+            #var=rep(var,'&nbsp;')
+            Document.objects.filter(pk=docID).update(wordstr=var)
+            status=True
+        context = {'var': var, 'status': status,'ID':docID}
+        return render(request, 'ocr.html', context)
     else:
-        status=True
-        var=str(documents.wordstr)
-    context={'var':var, 'status':status}
-    return render(request, 'ocr.html',context)
+        return render(request,'ocr.html')
 
 @login_required
 def parsing(request):
@@ -298,7 +318,7 @@ def getPhoneNumber(string):
     elif re.search(r'\+[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string):
         return re.search(r'\+[\d]{1,3}\s[\d]{3}\s[\d]{3}\s[\d]{4}', string).group(0)
     elif re.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string):
-        return e.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string).group(0)
+        return re.search(r'\+[\d]{1,3}\s[\d]{3}\.[\d]{3}\.[\d]{4}', string).group(0)
     elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string):
         return re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\.[\d]{4}', string).group(0)
     elif re.search(r'\+[\d]{1,3}\s[(][\d]{3}[)]\s[\d]{3}\s[\d]{4}', string):
